@@ -6,7 +6,6 @@ use std::{
     },
     time::Duration,
 };
-use std::f32::consts::E;
 
 use ansi_term::Colour::{Cyan, Green, Red};
 use anyhow::{anyhow, bail, Result};
@@ -15,19 +14,20 @@ use rayon::{ThreadPool, ThreadPoolBuilder};
 use snarkos_node_router_messages::UnconfirmedSolution;
 use snarkvm::{
     console::account::Address,
-    prelude::ToBytes,
+    ledger::Header,
+    prelude::{
+        narwhal::Data,
+        puzzle::{PartialSolution, Puzzle, Solution},
+        CanaryV0,
+        Network,
+        ToBytes,
+    },
 };
-use snarkvm::ledger::Header;
-use snarkvm::prelude::{Network, TestnetV0};
-use snarkvm_ledger_narwhal_data::Data;
-use snarkvm_ledger_puzzle::{Puzzle, Solution};
 use snarkvm_ledger_puzzle_epoch::MerklePuzzle;
 use tokio::{sync::mpsc, task};
 use tracing::{debug, error, info, warn};
 
-use crate::client_direct::DirectClient;
-
-type N = TestnetV0;
+use crate::{client_direct::DirectClient, N};
 
 type Message = snarkos_node_router_messages::Message<N>;
 
@@ -241,8 +241,9 @@ impl Prover {
         counter: u64,
         minimum_proof_target: Option<u64>,
     ) -> Result<(Solution<N>, u64)> {
+        let partial_solution = PartialSolution::new(epoch_hash, address, counter)?;
         // Construct the solution.
-        let solution = Solution::new(epoch_hash, address, counter)?;
+        let solution = Solution::new(partial_solution, counter);
         // Compute the proof target.
         let proof_target = puzzle.get_proof_target(&solution)?;
         // Check that the minimum proof target is met.
@@ -311,7 +312,7 @@ impl Prover {
                                             address,
                                             counter,
                                             Option::from(current_proof_target.load(Ordering::SeqCst)),
-                                        )
+                                        );
                                     }
                                 })
                             })

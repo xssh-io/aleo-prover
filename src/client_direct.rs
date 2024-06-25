@@ -19,8 +19,7 @@ use snarkos_node_router_messages::{
     PuzzleRequest,
     PuzzleResponse,
 };
-use snarkvm::prelude::{Block, FromBytes, Network, TestnetV0};
-use snarkvm_ledger_narwhal_data::Data;
+use snarkvm::prelude::{narwhal::Data, Block, CanaryV0, FromBytes, Network};
 use tokio::{
     net::{TcpListener, TcpStream},
     sync::{
@@ -35,9 +34,7 @@ use tokio_stream::StreamExt;
 use tokio_util::codec::Framed;
 use tracing::{debug, error, info, warn};
 
-use crate::prover::ProverEvent;
-
-type N = TestnetV0;
+use crate::{prover::ProverEvent, N};
 
 type Message = snarkos_node_router_messages::Message<N>;
 
@@ -71,9 +68,7 @@ impl DirectClient {
 pub fn start(prover_sender: Arc<Sender<ProverEvent>>, client: Arc<DirectClient>) {
     task::spawn(async move {
         let receiver = client.receiver();
-        let genesis_header = *Block::<N>::from_bytes_le(N::genesis_bytes())
-            .unwrap()
-            .header();
+        let genesis_header = *Block::<N>::from_bytes_le(N::genesis_bytes()).unwrap().header();
         let connected = Arc::new(AtomicBool::new(false));
         let client_sender = client.sender();
 
@@ -148,6 +143,7 @@ pub fn start(prover_sender: Arc<Sender<ProverEvent>>, client: Arc<DirectClient>)
                                                 let resp_nonce: u64 = rng.gen();
                                                 let response = Message::ChallengeResponse(ChallengeResponse {
                                                     genesis_header,
+                                                    restrictions_id: todo!(),
                                                     signature: Data::Object(client.account.sign_bytes(&[nonce.to_le_bytes(), resp_nonce.to_le_bytes()].concat(), rng).unwrap()),
                                                     nonce: resp_nonce,
                                                 });

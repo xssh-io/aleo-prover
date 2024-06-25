@@ -9,7 +9,7 @@ use std::{net::ToSocketAddrs, str::FromStr, sync::Arc};
 use clap::Parser;
 use snarkvm::{
     console::account::Address,
-    prelude::{PrivateKey, TestnetV0, ViewKey},
+    prelude::{CanaryV0, PrivateKey, TestnetV0, ViewKey},
 };
 use tracing::{debug, error, info};
 use tracing_subscriber::layer::SubscriberExt;
@@ -19,7 +19,7 @@ use crate::{
     prover::Prover,
 };
 
-type N = TestnetV0;
+pub type N = CanaryV0;
 
 #[derive(Debug, Parser)]
 #[clap(name = "prover", about = "Standalone prover.")]
