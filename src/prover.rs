@@ -8,19 +8,16 @@ use std::{
 };
 
 use ansi_term::Colour::{Cyan, Green, Red};
-use anyhow::{anyhow, bail, Result};
+use anyhow::{bail, Result};
 use rand::{thread_rng, RngCore};
 use rayon::{ThreadPool, ThreadPoolBuilder};
 use snarkos_node_router_messages::UnconfirmedSolution;
 use snarkvm::{
     console::account::Address,
-    ledger::Header,
     prelude::{
         narwhal::Data,
         puzzle::{PartialSolution, Puzzle, Solution},
-        CanaryV0,
         Network,
-        ToBytes,
     },
 };
 use snarkvm_ledger_puzzle_epoch::MerklePuzzle;

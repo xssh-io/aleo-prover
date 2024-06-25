@@ -19,9 +19,9 @@ use snarkos_node_router_messages::{
     PuzzleRequest,
     PuzzleResponse,
 };
-use snarkvm::prelude::{narwhal::Data, Block, CanaryV0, FromBytes, Network};
+use snarkvm::prelude::{narwhal::Data, Block, FromBytes, Network};
 use tokio::{
-    net::{TcpListener, TcpStream},
+    net::TcpStream,
     sync::{
         mpsc,
         mpsc::{Receiver, Sender},

@@ -9,7 +9,7 @@ use std::{net::ToSocketAddrs, str::FromStr, sync::Arc};
 use clap::Parser;
 use snarkvm::{
     console::account::Address,
-    prelude::{CanaryV0, PrivateKey, TestnetV0, ViewKey},
+    prelude::{CanaryV0, PrivateKey, ViewKey},
 };
 use tracing::{debug, error, info};
 use tracing_subscriber::layer::SubscriberExt;
